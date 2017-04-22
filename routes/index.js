@@ -10,17 +10,12 @@ var bodyParser = require("body-parser");
 router.use(bodyParser.json());
 router.use(expressValidator()); // this line must be immediately after any of the bodyParser middlewares!
 
-
 router.use(session({
   secret: 'keyboard cat',
-  resave: false,
+  resave: true,
   saveUninitialized: true,
   cookie: { secure: true }
 }))
-
-// router.get('/', function(req, res) {
-//     res.render('landing');
-// })
 
 router.post('/user/register', function(req, res, next) {
     // name validators
@@ -46,20 +41,24 @@ router.post('/user/register', function(req, res, next) {
   req.checkBody('passwordConfirmation', 'please confirm your password').notEmpty();
   req.checkBody('passwordConfirmation', 'your passwords do not match').equals(req.body.password);
   
-  var errors = req.validationErrors();
+  var errors = req.validationErrors();    
   
   if (errors) {
-    console.log('ERRORS');
+      req.session.errors = errors;
+      res.locals.errors = errors;
+    console.log(req.session.errors);
   } else {
       db.users.save(user, function(err, user){
           if (err) {
               res.send(err);
           } else {
+              req.session.user = user.email;
               res.json(user);
           }
       })
     console.log("user added");
   }
+res.redirect('/');
 })
 
 router.post('/user/login', function(req, res, next) {

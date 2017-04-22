@@ -28,7 +28,7 @@ router.get('/task/:dbid', function(req, res, next) {
 
 // add task
 router.post('/task', function(req, res, next) {
-  
+    var task = req.body;
   // parse for errors first using express-validator
   
   // name
@@ -53,9 +53,10 @@ router.post('/task', function(req, res, next) {
   var errors = req.validationErrors();
   
   if (errors) {
-      res.render('landing', {errors: errors});
+      req.session.errors = errors;
+      res.redirect('/');
   } else {
-      var task = req.body;
+      
       db.tasks.save(task, function(err, task) {
           if(err) {
               res.send(err);
@@ -65,6 +66,17 @@ router.post('/task', function(req, res, next) {
       })
       console.log("task added");
   }
+})
+
+// Delete task
+router.delete('/task/:dbid', function(req, res, next) {
+    db.tasks.remove({_id: mongojs.ObjectId(req.params.dbid)}, function(err, task) {
+        if (err) {
+            res.send(err)
+        } else {
+            res.json(task);
+        }
+    });
 })
 
 module.exports = router;
