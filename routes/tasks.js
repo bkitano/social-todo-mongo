@@ -28,7 +28,7 @@ router.post('/task/:taskid/complete', function(req, res, next) {
 // add task
 router.post('/task/create', function(req, res, next) {
     var task = {
-        "creator": req.session.user,
+        "creator": req.session.email,
         "name": req.body.name,
         "description": req.body.description,
         "collaborator1": req.body.collaborator1,

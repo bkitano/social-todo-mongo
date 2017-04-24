@@ -49,7 +49,6 @@ app.use('/api', tasks);
 
 //---------PAGES----------
 app.get('/', function(req, res) {
-    console.log("req.session.email: " + req.session.email);
     if(!req.session.email) {
         res.render('landing', {register_errors:req.session.register_errors, login_errors: req.session.login_errors});
     } else {
@@ -58,7 +57,7 @@ app.get('/', function(req, res) {
                res.send(err);
            } else {
                req.session.tasks = tasks;
-               console.log("tasks retrieved from database: " + req.session.tasks);
+               console.log("tasks retrieved from database: " + req.session.tasks.length);
                res.render('dashboard', {name: req.session.name, tasks: req.session.tasks, errors: req.session.errors});
            }
         });
