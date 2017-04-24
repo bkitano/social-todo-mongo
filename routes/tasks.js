@@ -17,34 +17,15 @@ var dbtasks = mongojs('mongodb://cpsc213:cpsc213@ds019826.mlab.com:19826/social-
 
 // Completed task
 router.post('/task/:taskid/completed', function(req, res, next) {
-   dbtasks.tasks.find({"_id":req.params.taskid}, function(err, task) {
-       if (err) {
-           console.log(err);
-       } else {
-           // remake the task ugh
-           console.log(task);
-           var updatedTask = {
-               //"_id":task._id,
-               "creator":task.email,
-               "description":task.description,
-               "collaborator1":task.collaborator1,
-               "collaborator2":task.collaborator2,
-               "collaborator3":task.collaborator3,
-               "completed":!task.completed
-           }
-           dbtasks.tasks.save(updatedTask, function(err, task) {
-               if(err) {
-                   console.log(err);
-               } else {
-                   dbtasks.tasks.remove({"_id":req.params.taskid}, function(err, task) {
-                       if (err) {
-                           console.log(err);
-                       }
-                   })
-               }
-           });
-       }
-   })
+    var completed;
+    dbtasks.tasks.find({"_id":mongojs.ObjectId(req.params.taskid)}, function(err, task) {
+        if (err) {
+            console.log(err);
+        } else {
+            completed = task[0].completed;
+            dbtasks.tasks.update({"_id":mongojs.ObjectId(req.params.taskid)}, {$set: {"completed":!completed}});
+        }
+    })
     res.redirect('/');
 })
 
