@@ -26,14 +26,17 @@
     <ul class="tasks">
         {{#each my_tasks}}
                     <li class="task">
-                      <span class="task-title">{{this.name}}</span>
-                      <p class="description">{{this.description}}</p>
+                      <span class="task-title">Name: {{this.name}}</span>
+                      <p class="description">Desc: {{this.description}}</p>
+                      <p class="creator">Creator: {{this.creator}}</p>
                         <form method="post" action="/api/task/{{this._id}}/delete">
                           <input type="submit" name="delete" class="delete" value="delete">
                         </form>
+                        <div>
                       <form method="post" action="/api/task/{{this._id}}/completed">
                         <input type="submit" name="toggle" class="toggle" value="Completed?">
                         <p class="completed">{{this.completed}}</p>
+                        </div>
                     </li>
         {{/each}}
     </ul>
@@ -47,14 +50,15 @@
     <ul>
         {{#each shared_tasks}}
                 <li class="task">
-                      <span class="task-title">{{this.name}}</span>
-                      <p class="description">{{this.description}}</p>
-                        <form method="post" action="/api/task/{{this._id}}/delete">
-                          <input type="submit" name="delete" class="delete" value="delete">
-                        </form>
+                      <span class="name">Name: {{this.name}}</span>
+                      <p class="description">Desc: {{this.description}}</p>
+                        <p class="creator">Creator: {{this.creator}}</p>
                       <form method="post" action="/api/task/{{this._id}}/completed">
+                        <div>
                         <input type="submit" name="toggle" class="toggle" value="Completed?">
                         <p class="completed">{{this.completed}}</p>
+                        </div>
+                        </form>
                     </li>
         {{/each}}
         </ul>
@@ -62,6 +66,8 @@
     <h4>No tasks</h4>
     {{/if}}
     <hr>
+    
+    
     <div>
         <h4>Add a new task</h4>
         <form class="createTask" action="/api/task/create" method="POST">

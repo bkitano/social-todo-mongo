@@ -49,27 +49,34 @@ app.use('/api', tasks);
 
 //---------PAGES----------
 app.get('/', function(req, res) {
+    console.log('Now on server.js');
     if(!req.session.email) {
         res.render('landing', {register_errors:req.session.register_errors, login_errors: req.session.login_errors});
     } else {
         var email = req.session.email;
-        dbtasks.tasks.find( { $or: [ { "creator": email }, { "collaborator1":email }, { "collaborator2":email }, { "collaborator3":email } ] }, function(err, tasks) {
+        dbtasks.tasks.find( { $or: [ { "creator": email }, { "collaborator1":email }, { "collaborator2":email }, { "collaborator3":email } ] }, function(err, ftasks) {
            if(err) {
                res.send(err);
            } else {
+               console.log("number of tasks (as found by server.js): " + ftasks.length); // DEBUG working
                var my_tasks = [];
                var shared_tasks = [];
-               for (var i = 0; i < tasks.length; i ++) {
-                   if(tasks[i].creator == email) {
-                       my_tasks.push(tasks[i]);
+               for (var i = 0; i < ftasks.length; i ++) {
+                   if(ftasks[i].creator == email) {
+                       my_tasks.push(ftasks[i]); // not working
+                       console.log("My tasks (as found by server.js): " + my_tasks.length); // DEBUG working
                    } else {
-                       shared_tasks.push(tasks[i]);
+                       shared_tasks.push(ftasks[i]); // not working
+                      console.log("Shared tasks (as found by server.js: " + shared_tasks.length); // DEBUG working
                    }
                }
                req.session.my_tasks = my_tasks;
                req.session.shared_tasks = shared_tasks;
+               console.log("req.session.my_tasks before server.js render: " + req.session.my_tasks); // DEBUG working
+               console.log("req.session.shared_tasks before server.js render: " + req.session.shared_tasks); // DEBUG working
                res.render('dashboard', {name: req.session.name, my_tasks:req.session.my_tasks, shared_tasks:req.session.shared_tasks, errors: req.session.errors});
-
+                // req.session.my_tasks = null;
+                // req.session.shared_tasks = null;
            }
         });
     }

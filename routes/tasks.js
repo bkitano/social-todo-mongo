@@ -15,7 +15,7 @@ var dbtasks = mongojs('mongodb://cpsc213:cpsc213@ds019826.mlab.com:19826/social-
 //     });
 // })
 
-// Completed task
+// Completed task WORKS
 router.post('/task/:taskid/completed', function(req, res, next) {
     var completed;
     dbtasks.tasks.find({"_id":mongojs.ObjectId(req.params.taskid)}, function(err, task) {
@@ -30,7 +30,8 @@ router.post('/task/:taskid/completed', function(req, res, next) {
 })
 
 // add task
-router.post('/task/create', function(req, res, next) {
+router.post('/task/create', function(req, res, next) { // it seems like it's not even going to it
+    console.log("now on /task/create in tasks.js"); // DEBUG 
     var task = {
         "creator": req.session.email,
         "name": req.body.name,
@@ -41,6 +42,7 @@ router.post('/task/create', function(req, res, next) {
         "completed": false
     };
   // parse for errors first using express-validator
+  console.log("written tasks before validating (tasks.js): " + task); // DEBUG
   
   // name
   req.checkBody('name', 'name must be less than 50 chars').isLength({min:1, max: 500});  
@@ -65,16 +67,16 @@ router.post('/task/create', function(req, res, next) {
   
   if (errors) {
       req.session.errors = errors;
+      console.log(req.session.errors);
       res.redirect('/');
   } else {
-      
       dbtasks.tasks.save(task, function(err, task) {
           if(err) {
               res.send(err);
               req.session.errors = err;
               res.redirect('/');
           } else {
-              console.log("task added (/api/task/create): " + task)
+              console.log("task added (/api/task/create): " + task.name);
               res.redirect('/');
           }
       })
@@ -82,7 +84,7 @@ router.post('/task/create', function(req, res, next) {
   }
 })
 
-// Delete task
+// Delete task WORKS
 router.post('/task/:taskid/delete', function(req, res, next) {
     dbtasks.tasks.remove({_id: mongojs.ObjectId(req.params.taskid)}, function(err, task) {
         if (err) {
@@ -92,5 +94,12 @@ router.post('/task/:taskid/delete', function(req, res, next) {
         }
     });
 })
+
+router.post('/task/test', function(req, res, next) {
+    console.log("submit button works");
+    res.send("submit button works");
+})
+
+// the submit button is routing to /completed for some reason
 
 module.exports = router;
