@@ -21,8 +21,8 @@
 
     <h2 class="welcome">Welcome, {{name}}</h2>
     
-    {{#if tasks}}
-    {{#each tasks}}
+    {{#if my_tasks}}
+    {{#each my_tasks}}
     <div>
         <h4>Your Tasks</h4>
 
@@ -32,19 +32,51 @@
                     <form method="post" action="/api/task/{{this._id}}/delete">
                       <input type="submit" name="delete" class="delete" value="delete">
                     </form>
-                  <form method="post" action="/api/task/{{this._id}}/complete">
-                    <input type="submit" name="toggle" class="toggle" value="Mark {{#if this.complete}}
+                  <form method="post" action="/api/task/{{this._id}}/completed">
+                    <input type="submit" name="toggle" class="toggle" value="Mark {{#if this.completed}}
                   not complete
                   {{else}}
                   complete
                   {{/if}}">
                   </form>
-                  {{#if this.complete}}
+                  {{#if this.completed}}
                   complete
                   {{else}}
                   not complete
                   {{/if}}
-                  woooooot
+                  <p class="description">Description: {{this.description}}</p>
+                </li>
+            </ul>
+    </div>
+    {{/each}}
+    {{else}}
+    <h1>No tasks</h1>
+    {{/if}}
+    
+    {{#if shared_tasks}}
+    {{#each shared_tasks}}
+    <div>
+        <h4>Shared Tasks</h4>
+
+            <ul class="tasks">
+                <li class="task">
+                  <span class="task-title">{{this.name}}</span>
+                    <form method="post" action="/api/task/{{this._id}}/delete">
+                      <input type="submit" name="delete" class="delete" value="delete">
+                    </form>
+                  <form method="post" action="/api/task/{{this._id}}/completed">
+                    <input type="submit" name="toggle" class="toggle" value="Mark {{#if this.completed}}
+                  not complete
+                  {{else}}
+                  complete
+                  {{/if}}">
+                  </form>
+                  {{#if this.completed}}
+                  complete
+                  {{else}}
+                  not complete
+                  {{/if}}
+                  <p class="description">Description: {{this.description}}</p>
                 </li>
             </ul>
     </div>

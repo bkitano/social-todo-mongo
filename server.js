@@ -52,17 +52,39 @@ app.get('/', function(req, res) {
     if(!req.session.email) {
         res.render('landing', {register_errors:req.session.register_errors, login_errors: req.session.login_errors});
     } else {
-        dbtasks.tasks.find( {'creator': req.session.email }, function(err, tasks) {
+        var email = req.session.email;
+        dbtasks.tasks.find( { $or: [ { "creator": email }, { "collaborator1":email }, { "collaborator2":email }, { "collaborator3":email } ] }, function(err, tasks) {
            if(err) {
                res.send(err);
            } else {
-               req.session.tasks = tasks;
-               console.log("tasks retrieved from database: " + req.session.tasks.length);
-               res.render('dashboard', {name: req.session.name, tasks: req.session.tasks, errors: req.session.errors});
+               var my_tasks = [];
+               var shared_tasks = [];
+               for (var i = 0; i < tasks.length; i ++) {
+                   if(tasks[i].creator == email) {
+                       my_tasks.push(tasks[i]);
+                   } else {
+                       shared_tasks.push(tasks[i]);
+                   }
+               }
+               req.session.my_tasks = my_tasks;
+               req.session.shared_tasks = shared_tasks;
+               res.render('dashboard', {name: req.session.name, my_tasks:req.session.my_tasks, shared_tasks:req.session.shared_tasks, errors: req.session.errors});
+
            }
         });
     }
-    //req.session.errors = null;
+//     for (var i = 0; i < tasks.length; i++) {
+//       if (tasks.creator == email) {
+//           my_tasks.push(tasks[i])
+//       } else {
+//           shared_tasks.push(tasks[i]);
+//       }
+//   }
+   
+//   req.session.my_tasks = my_tasks;
+//   req.session.shared_tasks = shared_tasks;
+//   console.log("tasks retrieved from database: " + req.session.tasks.length);
+
 })
 
 // dbtasks.tasks.find({'creator':'asdf@asdf.com'}, function (err, tasks) {
