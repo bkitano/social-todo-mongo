@@ -46,18 +46,22 @@ router.post('/user/register', function(req, res, next) {
   
   if (errors) {
       req.session.register_errors = errors;
-    console.log(req.session.register_errors);
+        console.log(req.session.register_errors);
+        res.redirect('/');
+
   } else {
       dbusers.users.save(user, function(err, user){
           if (err) {
               res.send(err);
           } else {
               req.session.email = user.email;
+              req.session.name = user.name;
+              console.log("req after register, before redirect: " + req.session.email);
+              res.redirect('/');
           }
       })
     console.log("user added");
   }
-res.redirect('/');
 })
 
 //------LOGIN--------
@@ -72,7 +76,7 @@ router.post('/user/login', function(req, res, next) {
       if (err) {
           throw err;
       } else {
-          if(user == null) {
+          if(!user) {
               req.session.login_errors = "no user found";
                 //console.log("no user found " + req.session.errors.msg);
           } else {

@@ -49,6 +49,7 @@ app.use('/api', tasks);
 
 //---------PAGES----------
 app.get('/', function(req, res) {
+    console.log("req.session.email: " + req.session.email);
     if(!req.session.email) {
         res.render('landing', {register_errors:req.session.register_errors, login_errors: req.session.login_errors});
     } else {
