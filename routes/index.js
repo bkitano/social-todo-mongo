@@ -3,7 +3,7 @@ var router = express.Router();
 var exphbs = require("express-handlebars");
 var mongojs = require("mongojs");
 var expressValidator = require("express-validator");
-var db = mongojs('mongodb://cpsc213:cpsc213@ds019826.mlab.com:19826/social-todo', ['users']);
+var dbusers = mongojs('mongodb://cpsc213:cpsc213@ds019826.mlab.com:19826/social-todo', ['users']);
 var session = require("express-session");
 var bodyParser = require("body-parser");
 
@@ -13,9 +13,10 @@ router.use(expressValidator()); // this line must be immediately after any of th
 router.use(session({
   secret: 'keyboard cat',
   resave: true,
-  saveUninitialized: true,
-  cookie: { secure: true }
+  saveUninitialized: true
 }))
+
+//-------REGISTER----------
 
 router.post('/user/register', function(req, res, next) {
     // name validators
@@ -48,7 +49,7 @@ router.post('/user/register', function(req, res, next) {
       res.locals.errors = errors;
     console.log(req.session.errors);
   } else {
-      db.users.save(user, function(err, user){
+      dbusers.users.save(user, function(err, user){
           if (err) {
               res.send(err);
           } else {
@@ -61,23 +62,36 @@ router.post('/user/register', function(req, res, next) {
 res.redirect('/');
 })
 
+//------LOGIN--------
+
 router.post('/user/login', function(req, res, next) {
   var login = {
       email: req.body.email,
       password: req.body.password
-  };
+  }; 
   
-  db.users.findOne({email: login.email}, function(err, user) {
+  dbusers.users.findOne({email: login.email}, function(err, user) {
       if(err || !user) {
           res.send(err);
       } else {
           if (user.password == login.password) {
-              req.session.user = user._id;
-              res.send(req.session.user);
+              //req.session.user = user._id;
+              req.session.email = user.email;
+              req.session.name = user.name;
+              res.redirect('/');
           }
       }
   })
   
+  
+router.get('/user/logout', function(req, res, next) {
+    req.session.user = null;
+    req.session.name = null;
+    req.session.errors = null;
+    req.session.tasks = null;
+    res.redirect('/');
+})
+
   
   
 })

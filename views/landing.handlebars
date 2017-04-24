@@ -1,7 +1,11 @@
 <h1>Social todo app for cpsc213</h1>
 
 {{#if errors}}
-<h1>asdfasdfasdf</h1>
+<ul class="errors">
+{{#each errors}}
+<li class="errors">{{this.msg}}</li>
+{{/each}}
+</ul>
 {{/if}}
 
 {{#if user}}
@@ -14,7 +18,7 @@
         <label for="email">Email</label>
         <input name="email" id="email" type="text"><br>
         <label for="password">Password</label>
-        <input name="password"  id="password" type="text"><br>
+        <input name="password"  id="password" type="password"><br>
         <input type="submit"  class="log-in-submit">
     </form>
 </div>
@@ -30,8 +34,3 @@
       <input class="sign-up-submit" type="submit">
     </form>
 </div>
-
-
-<footer>
-    <a href="/user/logout" class="logout">Logout</a>
-</footer>

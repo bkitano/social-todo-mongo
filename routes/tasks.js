@@ -2,33 +2,39 @@ var express = require("express");
 var router = express.Router();
 var mongojs = require("mongojs");
 var validator = require("express-validator");
-var db = mongojs('mongodb://cpsc213:cpsc213@ds019826.mlab.com:19826/social-todo', ['tasks']);
+var dbtasks = mongojs('mongodb://cpsc213:cpsc213@ds019826.mlab.com:19826/social-todo', ['tasks']);
 
-// Get all tasks
-router.get('/tasks', function(req, res, next) {
-    db.tasks.find(function(err, tasks) {
-        if (err) {
-            res.send(err)
-        } else {
-            res.json(tasks);
-        }
-    });
-})
+// // Get all tasks
+// router.get('/tasks', function(req, res, next) {
+//     db.tasks.find(function(err, tasks) {
+//         if (err) {
+//             res.send(err)
+//         } else {
+//             res.json(tasks);
+//         }
+//     });
+// })
 
-// Get single task
-router.get('/task/:dbid', function(req, res, next) {
-    db.tasks.findOne({_id: mongojs.ObjectId(req.params.dbid)}, function(err, task) {
-        if (err) {
-            res.send(err)
-        } else {
-            res.json(task);
-        }
-    });
+// Completed task
+router.post('/task/:taskid/complete', function(req, res, next) {
+   dbtasks.tasks.updateOne(
+      { "_id" : req.params.taskid },
+      { $set: { "completed" : !dbtasks.findOne({"_id":req.params.taskid}).completed } }
+   );
+
+    res.redirect('/');
 })
 
 // add task
-router.post('/task', function(req, res, next) {
-    var task = req.body;
+router.post('/task/create', function(req, res, next) {
+    var task = {
+        "creator": req.session.user,
+        "name": req.body.name,
+        "description": req.body.description,
+        "collaborator1": req.body.collaborator1,
+        "collaborator2": req.body.collaborator2,
+        "collaborator3": req.body.collaborator3
+    };
   // parse for errors first using express-validator
   
   // name
@@ -57,11 +63,14 @@ router.post('/task', function(req, res, next) {
       res.redirect('/');
   } else {
       
-      db.tasks.save(task, function(err, task) {
+      dbtasks.tasks.save(task, function(err, task) {
           if(err) {
               res.send(err);
+              req.session.errors = err;
+              res.redirect('/');
           } else {
-              res.json(task);
+              console.log("task added (/api/task/create): " + task)
+              res.redirect('/');
           }
       })
       console.log("task added");
@@ -69,12 +78,12 @@ router.post('/task', function(req, res, next) {
 })
 
 // Delete task
-router.delete('/task/:dbid', function(req, res, next) {
-    db.tasks.remove({_id: mongojs.ObjectId(req.params.dbid)}, function(err, task) {
+router.post('/task/:taskid/delete', function(req, res, next) {
+    dbtasks.tasks.remove({_id: mongojs.ObjectId(req.params.taskid)}, function(err, task) {
         if (err) {
             res.send(err)
         } else {
-            res.json(task);
+            res.redirect('/');
         }
     });
 })
