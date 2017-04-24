@@ -47,11 +47,10 @@ app.use('/', index);
 app.use('/api', tasks);
 
 
-
 //---------PAGES----------
 app.get('/', function(req, res) {
     if(!req.session.email) {
-        res.render('landing', {errors: req.session.errors, user: req.session.user});
+        res.render('landing', {register_errors:req.session.register_errors, login_errors: req.session.login_errors});
     } else {
         dbtasks.tasks.find( {'creator': req.session.email }, function(err, tasks) {
            if(err) {
@@ -63,7 +62,7 @@ app.get('/', function(req, res) {
            }
         });
     }
-    req.session.errors = null;
+    //req.session.errors = null;
 })
 
 // dbtasks.tasks.find({'creator':'asdf@asdf.com'}, function (err, tasks) {
