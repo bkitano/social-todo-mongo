@@ -2,7 +2,7 @@
 //-------CONSTANTS--------
 
 // local things
-var port = process.env.port || 8080;
+var port = process.env.PORT || 8080;
 
 // modules
 var express = require('express');
