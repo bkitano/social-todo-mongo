@@ -25,7 +25,11 @@
     {{#if my_tasks}}
     <ul class="tasks">
         {{#each my_tasks}}
-                    <li class="task">
+                    {{#if this.completed}}
+                <li class="task completed">
+                {{else}}
+                <li class="task">
+                {{/if}}
                       <span class="task-title">Name: {{this.name}}</span>
                       <p class="description">Desc: {{this.description}}</p>
                       <p class="creator">Creator: {{this.creator}}</p>
@@ -50,7 +54,11 @@
     {{#if shared_tasks}}
     <ul class="tasks">
         {{#each shared_tasks}}
+                {{#if this.completed}}
+                <li class="task completed">
+                {{else}}
                 <li class="task">
+                {{/if}}
                       <span class="name">Name: {{this.name}}</span>
                       <p class="description">Desc: {{this.description}}</p>
                         <p class="creator">Creator: {{this.creator}}</p>
@@ -68,6 +76,38 @@
     {{/if}}
     <hr>
     
+    <!-- testing toggles 
+    <h4>Shared Tasks (test)</h4>
+    {{#if shared_tasks}}
+    <ul class="tasks">
+        {{#each shared_tasks}}
+                <li class="task">
+                      <span class="name">Name: {{this.name}}</span>
+                      <p class="description">Desc: {{this.description}}</p>
+                        <p class="creator">Creator: {{this.creator}}</p>
+                        {{#if this.completed}}
+                          <form method="post" action="/api/task/{{this._id}}/incomplete">
+                            <div>
+                            <input type="submit" name="toggle" class="toggle" value="Mark incomplete">
+                            <p class="completed">{{this.completed}}</p>
+                            </div>
+                          </form>
+                        {{else}}
+                        <form method="post" action="/api/task/{{this._id}}/complete">
+                          <div>
+                            <input type="submit" name="toggle" class="toggle" value="Mark complete">
+                            <p class="completed">{{this.completed}}</p>
+                          </div>
+                        </form>
+                        {{/if}}
+                    </li>
+        {{/each}}
+        </ul>
+    {{else}}
+    <h4>No tasks</h4>
+    {{/if}}
+    <hr>
+    -->
     
     <div>
         <h4>Add a new task</h4>

@@ -78,7 +78,6 @@ router.post('/user/login', function(req, res, next) {
       } else {
           if(!user) {
               req.session.login_errors = "no user found";
-                //console.log("no user found " + req.session.errors.msg);
           } else {
               if (user.password !== login.password) {
                   req.session.login_errors = "wrong password";
@@ -93,10 +92,8 @@ router.post('/user/login', function(req, res, next) {
   
   
 router.get('/user/logout', function(req, res, next) {
-    req.session.email = null;
-    req.session.errors = null;
-    req.session.login_errors = null;
-    req.session.register_errors = null;
+    req.session.destroy();
+    console.log('logged out');
     res.redirect('/');
 })
 

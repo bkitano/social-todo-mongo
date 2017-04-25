@@ -70,37 +70,17 @@ app.get('/', function(req, res) {
                       console.log("Shared tasks (as found by server.js: " + shared_tasks.length); // DEBUG working
                    }
                }
+               
                req.session.my_tasks = my_tasks;
                req.session.shared_tasks = shared_tasks;
+               
                console.log("req.session.my_tasks before server.js render: " + req.session.my_tasks); // DEBUG working
                console.log("req.session.shared_tasks before server.js render: " + req.session.shared_tasks); // DEBUG working
                res.render('dashboard', {name: req.session.name, my_tasks:req.session.my_tasks, shared_tasks:req.session.shared_tasks, errors: req.session.errors});
-                // req.session.my_tasks = null;
-                // req.session.shared_tasks = null;
            }
         });
     }
-//     for (var i = 0; i < tasks.length; i++) {
-//       if (tasks.creator == email) {
-//           my_tasks.push(tasks[i])
-//       } else {
-//           shared_tasks.push(tasks[i]);
-//       }
-//   }
-   
-//   req.session.my_tasks = my_tasks;
-//   req.session.shared_tasks = shared_tasks;
-//   console.log("tasks retrieved from database: " + req.session.tasks.length);
-
 })
-
-// dbtasks.tasks.find({'creator':'asdf@asdf.com'}, function (err, tasks) {
-//     if (err) {
-//         console.log(err);
-//     } else {
-//         console.log(tasks);
-//     }
-// })
 
 //--------FOOTER----------
 app.listen(port, function(req, res) {

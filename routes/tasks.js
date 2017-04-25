@@ -4,18 +4,13 @@ var mongojs = require("mongojs");
 var validator = require("express-validator");
 var dbtasks = mongojs('mongodb://cpsc213:cpsc213@ds019826.mlab.com:19826/social-todo', ['tasks']);
 
-// // Get all tasks
-// router.get('/tasks', function(req, res, next) {
-//     db.tasks.find(function(err, tasks) {
-//         if (err) {
-//             res.send(err)
-//         } else {
-//             res.json(tasks);
-//         }
-//     });
-// })
+//------Test completed-------
+router.post('/task/:taskid/complete', function(req, res) {
+    // update
+});
+//---------------------------
 
-// Completed task WORKS
+// Completed task FIX
 router.post('/task/:taskid/completed', function(req, res, next) {
     var completed;
     dbtasks.tasks.find({"_id":mongojs.ObjectId(req.params.taskid)}, function(err, task) {
@@ -30,8 +25,7 @@ router.post('/task/:taskid/completed', function(req, res, next) {
 })
 
 // add task
-router.post('/task/create', function(req, res, next) { // it seems like it's not even going to it
-    console.log("now on /task/create in tasks.js"); // DEBUG 
+router.post('/task/create', function(req, res, next) { 
     var task = {
         "creator": req.session.email,
         "name": req.body.name,
@@ -41,23 +35,20 @@ router.post('/task/create', function(req, res, next) { // it seems like it's not
         "collaborator3": req.body.collaborator3,
         "completed": false
     };
+    
   // parse for errors first using express-validator
-  console.log("written tasks before validating (tasks.js): " + task); // DEBUG
-  
+
   // name
   req.checkBody('name', 'name must be less than 50 chars').isLength({min:1, max: 500});  
   
   // collaborator1
   req.checkBody('collaborator1', 'valid email required').optional({checkFalsy:true}).isEmail();
-  //req.checkBody('collaborator1', 'email must be less than 50 chars').isLength({ max: 50});  
   
   // collaborator2
   req.checkBody('collaborator2', 'valid email required').optional({checkFalsy:true}).isEmail();
-  //req.checkBody('collaborator2', 'email must be less than 50 chars').isLength({ max: 50});  
   
   // collaborator3
   req.checkBody('collaborator3', 'valid email required').optional({checkFalsy:true}).isEmail();
-  //req.checkBody('collaborator3', 'email must be less than 50 chars').isLength({ max: 50});  
 
   // description
   req.checkBody('description', 'please write a description').notEmpty();
@@ -100,6 +91,5 @@ router.post('/task/test', function(req, res, next) {
     res.send("submit button works");
 })
 
-// the submit button is routing to /completed for some reason
 
 module.exports = router;
